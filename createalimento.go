@@ -1,27 +1,39 @@
 package main
 
-import "net/http"
+import (
+	"net/http"
+
+	"github.com/gin-gonic/gin"
+)
+
+func CalcularRecomendacion(calorias int) string {
+	if calorias > 200 {
+		return "Baja recomendación en su dieta"
+	} else {
+		return "Alta recomendación en su dieta"
+	}
+}
 
 func createAlimento(c *gin.Context) {
 	var alimento Alimento
 	err := c.BindJSON(&alimento)
 	if err != nil {
-		c.AbortWithStatus(http.StatusBadRequest)
+		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 
-	stmt, err := db.Prepare("INSERT INTO alimentos(id, nombre, calorias, recomendacion) values(?, ?, ?, ?)")
+	// Calcular la recomendación
+	alimento.Recomendacion = CalcularRecomendacion(alimento.Calorias)
+
+	result, err := db.Exec("INSERT INTO alimentos (nombre, calorias, recomendacion) VALUES (?, ?, ?)", alimento.Nombre, alimento.Calorias, alimento.Recomendacion)
 	if err != nil {
-		c.AbortWithStatus(http.StatusInternalServerError)
-		return
-	}
-	defer stmt.Close()
-
-	_, err = stmt.Exec(alimento.Nombre, alimento.Calorias, alimento.Recomendacion)
-	if err != nil {
-		c.AbortWithStatus(http.StatusInternalServerError)
+		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
 
-	c.JSON(http.StatusCreated, gin.H{"status": http.StatusCreated, "message": "Alimento creado exitosamente"})
+	id, _ := result.LastInsertId()
+
+	alimento.ID = int(id)
+
+	c.JSON(http.StatusOK, alimento)
 }

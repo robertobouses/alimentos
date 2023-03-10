@@ -3,9 +3,11 @@ package main
 import (
 	"encoding/json"
 	"net/http"
+
+	"github.com/gin-gonic/gin"
 )
 
-func getAlimento(c *gin.Context) {
+func getAlimentoID(c *gin.Context) {
 	id := c.Param("id")
 
 	var alimento Alimento
