@@ -1,10 +1,18 @@
-package main
+package gestion
 
 import (
+	"database/sql"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
 )
+
+type Alimento struct {
+	ID            int    `json:"id"`
+	Nombre        string `json:"nombre"`
+	Calorias      int    `json:"calorias"`
+	Recomendacion string `json:"recomendacion"`
+}
 
 func CalcularRecomendacion(calorias int) string {
 	if calorias > 200 {
@@ -14,9 +22,12 @@ func CalcularRecomendacion(calorias int) string {
 	}
 }
 
-func createAlimento(c *gin.Context) {
+func CreateAlimento(c *gin.Context) {
+
+	db, err := sql.Open("postgres", "postgres://roberto:pass1234@localhost:4444/postgres?sslmode=disable")
+
 	var alimento Alimento
-	err := c.BindJSON(&alimento)
+	err = c.BindJSON(&alimento)
 	if err != nil {
 		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return

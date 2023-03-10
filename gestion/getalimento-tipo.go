@@ -1,4 +1,4 @@
-package main
+package gestion
 
 import (
 	"net/http"
@@ -8,7 +8,7 @@ import (
 	_ "github.com/lib/pq"
 )
 
-func getAlimentosTipo(c *gin.Context) {
+func GetAlimentosTipo(c *gin.Context) {
 	tipo := c.Param("tipo")
 	var alimentos []Alimento
 	var err error
