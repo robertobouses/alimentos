@@ -1,11 +1,13 @@
 package main
 
+
 import (
 	"database/sql"
 	"fmt"
 
 	"github.com/gin-gonic/gin"
 	_ "github.com/lib/pq"
+	"github.com/robertobouses/alimentos/gestion"
 )
 
 type Alimento struct {
@@ -26,10 +28,12 @@ func main() {
 	defer db.Close()
 
 	router := gin.Default()
-	fmt.Println(router)
-	router.POST("/alimentos", createAlimento)
-	router.GET("/alimentos/:id", getAlimentoID)
-	router.GET("/alimentos/:tipo", getAlimentosTipo)
+
+
+	router.POST("/alimentos", gestion.CreateAlimento)
+	router.GET("/alimentos/:id", gestion.GetAlimentoID)
+	router.GET("/alimentos/:tipo", gestion.GetAlimentosTipo)
+
 	//router.GET("/alimentos/hipercaloricos", getAlimentosTipo)
 
 	err = router.Run(":8080")
