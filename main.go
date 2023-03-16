@@ -5,7 +5,7 @@ import (
 	"fmt"
 
 	"github.com/gin-gonic/gin"
-	_ "github.com/mattn/go-sqlite3"
+	_ "github.com/lib/pq"
 )
 
 type Alimento struct {
@@ -19,7 +19,7 @@ var db *sql.DB
 
 func main() {
 	var err error
-	db, err = sql.Open("sqlite3", "./alimentos.db")
+	db, err := sql.Open("postgres", "postgres://roberto:pass1234@localhost:4444/postgres?sslmode=disable")
 	if err != nil {
 		panic(err)
 	}
@@ -28,7 +28,9 @@ func main() {
 	router := gin.Default()
 	fmt.Println(router)
 	router.POST("/alimentos", createAlimento)
-	router.GET("/alimentos/:id", getAlimento)
+	router.GET("/alimentos/:id", getAlimentoID)
+	router.GET("/alimentos/:tipo", getAlimentosTipo)
+	//router.GET("/alimentos/hipercaloricos", getAlimentosTipo)
 
 	err = router.Run(":8080")
 	if err != nil {
