@@ -3,6 +3,7 @@ package main
 
 import (
 	"database/sql"
+	"fmt"
 
 	"github.com/gin-gonic/gin"
 	_ "github.com/lib/pq"
@@ -28,9 +29,11 @@ func main() {
 
 	router := gin.Default()
 
+
 	router.POST("/alimentos", gestion.CreateAlimento)
 	router.GET("/alimentos/:id", gestion.GetAlimentoID)
 	router.GET("/alimentos/:tipo", gestion.GetAlimentosTipo)
+
 	//router.GET("/alimentos/hipercaloricos", getAlimentosTipo)
 
 	err = router.Run(":8080")
